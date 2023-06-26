@@ -11,6 +11,8 @@ a {
   transition: color 0.3s ease-in-out;
 }
 
+
+
 a:hover {
   color: #326ba8;
 }
@@ -162,4 +164,8 @@ footer {
 
 footer p {
   margin: 0;
+}
+
+h1{
+  
 }

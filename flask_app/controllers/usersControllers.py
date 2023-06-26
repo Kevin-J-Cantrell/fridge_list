@@ -19,24 +19,26 @@ def Register_Page():
     
     return render_template ("register.html")
 
-@app.route('/dashboard')
-def Dashboard():
-    item_id = "36904791"
-    url = f"https://developer.api.walmart.com/api-proxy/service/affil/product/v2/postbrowse?itemId={item_id}"
 
-    response = requests.get(url)
 
-    if response.status_code == 200:
-        # Request was successful
-        json_data = response.json()
-        # Do something with the JSON data
-    else:
-        # Request failed for some reason
-        print(f"Request failed with status code {response.status_code}")
+# @app.route('/dashboard')
+# def Dashboard():
+#     item_id = "36904791"
+#     url = f"https://developer.api.walmart.com/api-proxy/service/affil/product/v2/postbrowse?itemId={item_id}"
+
+#     response = requests.get(url)
+
+#     if response.status_code == 200:
+#         # Request was successful
+#         json_data = response.json()
+#         # Do something with the JSON data
+#     else:
+#         # Request failed for some reason
+#         print(f"Request failed with status code {response.status_code}")
 
     
     
-    return render_template ("dashboard.html",user=User.get_all())
+#     return render_template ("dashboard.html",user=User.get_all())
 
 @app.route('/register', methods=['POST'])
 def Register():
@@ -49,7 +51,7 @@ def Register():
         "password": bcrypt.generate_password_hash(request.form['password'])
     }
     session['user_id'] = User.create(data)
-    return redirect ("/dashboard")
+    return redirect (f"/dashboard")
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -67,5 +69,5 @@ def login():
     # if the passwords matched, we set the user_id into session
     session['user_id'] = user_in_db.id
     # never render on a post!!!
-    return redirect("/dashboard")
+    return redirect(f"/dashboard")
 

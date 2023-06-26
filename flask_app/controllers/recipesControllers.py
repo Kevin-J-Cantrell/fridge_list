@@ -1,3 +1,4 @@
+import requests
 from flask_app import app
 from flask import Flask, redirect, session, request, render_template, url_for, flash
 from flask_app.models.recipes import Recipe
@@ -5,21 +6,47 @@ from flask_app.models.users import User
 from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 
-@app.route('/add/recipe/page')
-def add_page():
-    
-    return render_template ("add_recipe.html",recipes=Recipe.get_all())
+# @app.route('/recipe/page')
+# def recipe_page():
 
-@app.route('/posted/info/<int:id>')
-def Posted_info(id):
+#     item_id = "36904791"
+#     url = f"https://developer.api.walmart.com/api-proxy/service/affil/product/v2/postbrowse?itemId={item_id}"
+#     response = requests.get(url)
     
-    recipes=Recipe.rcp_user(id)
-    users=User.get_one({'id':session['user_id']})
-    return render_template ("posted_info.html",users=users,recipes=recipes )
+#     # Do something with the response, like print the JSON data
+#     print(response.json())
+#     return render_template ("recipes.html",recipes=Recipe.get_all())
 
+# ----------------------------------------------------------------------
+
+@app.route('/recipe/page/<item_id>')
+def recipe_page(item_id):
+    # Send a request to the Walmart API and retrieve the JSON response
+    url = f"https://developer.api.walmart.com/api-proxy/service/affil/product/v2/postbrowse?itemId={item_id}"
+    response = requests.get(url)
+    data = response.json()
+
+    # Loop through the items in the JSON response and create new Recipe objects
+    for item in data.get('items', []):
+        # Extract the relevant information from the JSON data
+        name = item.get('name')
+        description = item.get('shortDescription')
+        image_url = item.get('imageEntities', [{}])[0].get('thumbnailImageUrl')
+        
+        # Create a new Recipe object with the extracted data and save it to the database
+        recipe = Recipe(name=name, description=description, image_url=image_url)
+        recipe.save()
+
+    # Retrieve all recipes from the Recipe model
+    recipes = Recipe.get_all()
+    
+    # Render the template with the list of recipes
+    return render_template("recipes.html", recipes=recipes)
+
+# ----------------------------------------------------------------------------------
 
 @app.route('/edit/recipe/page/<int:id>')
-def edit_page(id):
+def edit_recipe_page(id):
     
     
     return render_template ("edit_recipe.html", recipes=Recipe.get_one(id))

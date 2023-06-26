@@ -9,21 +9,26 @@ class Item:
     db = 'fridge_list'
     def __init__(self, data):
         self.id = data['id']
-        self.item_name = data['item_name']
+        self.name = data['name']
         self.amount  = data['amount']
+        self.msrp  = data['main_price']
+        self.salePrice  = data['discounts']
+        self.categoryPath  = data['categoryPath']
+        self.thumbnailImage  = data['thumbnailImage']
+        self.stock  = data['stock']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
     
     @classmethod
     def get_all(cls):
-        query = "SELECT * FROM users;"
+        query = "SELECT * FROM items;"
         # make sure to call the connectToMySQL function with the schema you are targeting.
-        things = connectToMySQL(cls.db).query_db(query)
+        many_items = connectToMySQL(cls.db).query_db(query)
         # Create an empty list to append our instances of users
         output = []
         # Iterate over the db results and create instances of users with cls.
-        for stuff in things:
-            output.append( cls(stuff) )
+        for item in many_items:
+            output.append( cls(item) )
         return output
 
     @classmethod
